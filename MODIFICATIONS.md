@@ -5,27 +5,28 @@ This repository keeps the engine's architecture (SVG `feDisplacementMap` referen
 `filter: url(#…)`, one runtime-generated displacement map per element) and changes the parts that
 decided how the glass *looks* and how it is *attached* to a card.
 
-## 1. Five spectral samples instead of three
+## 1. Nine spectral samples instead of three
 
 `CHANNELS` in `src/liquid-glass.js` used to isolate R, G and B and displace each at its own scale.
 With a large `chroma` that reads as three hard colour bands.
 
-Now five weighted samples span the spectrum — R, R/G, G, G/B, B — with weights that sum to 1 on
-every channel (`0.75`, `0.25+0.25`, `0.5`, `0.25+0.25`, `0.75`). Colour energy is preserved, so the
-glass does not darken, and the fringe becomes a gradient rather than three stripes.
+The engine now builds nine bands along the R→G→B axis and normalises the per-channel weights so
+each channel still sums to 1. Colour energy is preserved (the glass does not darken) and the fringe
+becomes a continuous spectrum, which is what lets the demo run with `blur: 0` and stay crisp.
 
-Scales follow `CHROMA_T = [0, 0.35, 0.5, 0.75, 1]`.
+Scales are `i / 8` for i in 0…8.
 
 ## 2. Linear interpolation in the lens profile
 
 `const m = table[Math.min(N, Math.round(s * N))]` snapped the bend to the nearest table entry, which
 shows up as concentric steps at high `refraction`. It now interpolates between `i0` and `i1`.
 
-## 3. Ordered dithering on the displacement bytes
+## 3. Noise dithering on the displacement bytes
 
 The map stores the bend in 8-bit R/G channels. At `refraction: 92` one LSB is ≈ 0.7 CSS px, enough to
-band. A 4×4 Bayer offset of ±1.5 LSB is added before rounding; the banding turns into fine grain that
-disappears when the 3× screenshot is downscaled.
+band. A 4×4 Bayer matrix was the first attempt, but a periodic pattern shows up as a visible dot lattice
+once `refraction` grows. It is now interleaved gradient noise (non-repeating) at ~±0.4 LSB, which
+reads as fine grain and vanishes at capture resolution.
 
 ## 4. `mapScale` raised to 4–5
 

@@ -266,16 +266,31 @@ function node(name, attrs) {
   return n;
 }
 
-// 5 个光谱采样：R → R/G → G → G/B → B，权重之和在每个通道上都等于 1，
-// 比 3 通道版本多两档过渡，色散带之间不再断层。
-const CHANNELS = [
-  '0.75 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0',
-  '0.25 0 0 0 0  0 0.25 0 0 0  0 0 0 0 0  0 0 0 1 0',
-  '0 0 0 0 0  0 0.5 0 0 0  0 0 0 0 0  0 0 0 1 0',
-  '0 0 0 0 0  0 0.25 0 0 0  0 0 0.25 0 0  0 0 0 1 0',
-  '0 0 0 0 0  0 0 0 0 0  0 0 0.75 0 0  0 0 0 1 0',
-];
-const CHROMA_T = [0, 0.35, 0.5, 0.75, 1];
+// Spectral sampling. Each band isolates a narrow slice of the R→G→B axis and is displaced
+// at its own scale; the per-channel weights are normalised so every channel still sums to 1
+// and the glass keeps its colour. More bands = a continuous fringe instead of 3 or 5 hard
+// steps, which is what lets us drop the source blur and keep the glass crisp.
+const CHROMA_BANDS = 9;
+
+function buildSpectrum(n) {
+  const raw = [];
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1);
+    raw.push([
+      Math.max(0, 1 - 2 * t),                 // red end
+      1 - Math.abs(2 * t - 1),                // green centre
+      Math.max(0, 2 * t - 1),                 // blue end
+    ]);
+  }
+  const sum = [0, 0, 0];
+  for (const w of raw) w.forEach((v, c) => { sum[c] += v; });
+  return raw.map((w) => [w[0] / sum[0], w[1] / sum[1], w[2] / sum[2]]);
+}
+
+const CHANNELS = buildSpectrum(CHROMA_BANDS).map(([r, g, b]) =>
+  `${r.toFixed(4)} 0 0 0 0  0 ${g.toFixed(4)} 0 0 0  0 0 ${b.toFixed(4)} 0 0  0 0 0 1 0`);
+
+const CHROMA_T = Array.from({ length: CHROMA_BANDS }, (_, i) => i / (CHROMA_BANDS - 1));
 
 // Filter graph (all coordinates are fractions of the element box — see bendScale):
 //   map        = lens PNG over neutral grey (128 = no bend), only inside the lens rect
