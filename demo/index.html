@@ -12,8 +12,6 @@
 
   <!-- Background layers. Every glass plate gets a pixel-aligned copy of these. -->
   <div class="lg-bg"></div>
-  <div class="lg-grid"></div>
-  <div class="lg-hatch"></div>
   <div class="lg-scrim"></div>
   <div class="lg-vignette"></div>
 
@@ -25,7 +23,7 @@
     <span><b>05</b> License</span>
   </nav>
 
-  <section class="hero glass" data-glass data-refraction="190" data-bezel="0.18" data-chroma="1.00">
+  <section class="hero glass" data-glass data-refraction="92" data-bezel="0.56" data-chroma="0.55" data-map-scale="8" data-blur="0.55">
     <div class="eyebrow">Liquid glass · v1.1</div>
     <h1>Refraction you can<br>measure in pixels.</h1>
     <p>
@@ -48,7 +46,7 @@
     </div>
   </section>
 
-  <aside class="side glass" data-glass data-refraction="190" data-bezel="0.18" data-chroma="1.00">
+  <aside class="side glass" data-glass data-refraction="92" data-bezel="0.56" data-chroma="0.55" data-map-scale="8" data-blur="0.55">
     <h2>Edge bend across the rim</h2>
     <svg class="chart" viewBox="0 0 456 210" role="img" aria-label="Refraction strength falls off from the rim">
       <defs>
@@ -82,8 +80,8 @@
 
   const stage = document.querySelector('.stage');
   const glass = mountGlassPlate(stage, {
-    layers: ['.lg-bg', '.lg-grid', '.lg-hatch', '.lg-scrim', '.lg-vignette'],
-    chroma: 0.68,
+    layers: ['.lg-bg', '.lg-scrim', '.lg-vignette'],
+    chroma: 0.55,
     mapScale: 4,
   });
 

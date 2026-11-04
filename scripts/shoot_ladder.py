@@ -23,10 +23,10 @@ SCALE = 3
 CLIP = {"x": 120, "y": 320, "width": 430, "height": 250}
 
 STEPS = [
-    ("baseline · refr 170 · bezel 0.10 · chroma 0.95", 170, 0.10, 0.95),
-    ("+1 · refr 190 · bezel 0.16 · chroma 1.00", 190, 0.16, 1.00),
-    ("+2 · refr 210 · bezel 0.22 · chroma 1.05", 210, 0.22, 1.05),
-    ("+3 · refr 230 · bezel 0.30 · chroma 1.10", 230, 0.30, 1.10),
+    ("baseline · refr 92 · bezel 0.56 · chroma 0.55", 92, 0.56, 0.55),
+    ("+1 · refr 110 · bezel 0.56 · chroma 0.65", 110, 0.56, 0.65),
+    ("+2 · refr 130 · bezel 0.56 · chroma 0.75", 130, 0.56, 0.75),
+    ("+3 · refr 150 · bezel 0.60 · chroma 0.85", 150, 0.60, 0.85),
 ]
 
 
@@ -43,7 +43,7 @@ def main() -> None:
         page = browser.new_page(viewport={"width": 1600, "height": 900}, device_scale_factor=SCALE)
         for i, (label, refr, bezel, chroma) in enumerate(STEPS):
             url = (f"http://127.0.0.1:{PORT}/demo/optics.html"
-                   f"?refr={refr}&bezel={bezel}&chroma={chroma}&mapScale=5")
+                   f"?refr={refr}&bezel={bezel}&chroma={chroma}&mapScale=4&blur=0")
             page.goto(url, wait_until="networkidle")
             page.wait_for_function("window.__glassReady === true")
             page.wait_for_timeout(1600)

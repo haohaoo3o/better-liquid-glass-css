@@ -22,8 +22,8 @@
     position: absolute; inset: 0;
     background:
       repeating-linear-gradient(90deg,
-        rgba(238, 244, 248, 0.80) 0 7px,
-        rgba(10, 14, 18, 0.90) 7px 22px);
+        rgba(226, 236, 242, 0.62) 0 7px,
+        rgba(14, 19, 24, 0.82) 7px 22px);
     z-index: 0;
   }
 
@@ -82,28 +82,31 @@
   <div class="lg-scrim"></div>
 
   <div class="cap">pill · radius 90</div>
-  <div class="pill glass" data-glass data-refraction="210" data-bezel="0.22" data-chroma="1.05" data-map-scale="5"></div>
+  <div class="pill glass" data-glass data-refraction="92" data-bezel="0.56" data-chroma="0.55" data-map-scale="4"></div></div>
 
   <div class="cap2">lens · radius 50%</div>
-  <div class="lens glass" data-glass data-refraction="210" data-bezel="0.55" data-chroma="1.0" data-curvature="2" data-map-scale="5"></div>
+  <div class="lens glass" data-glass data-refraction="92" data-bezel="0.56" data-chroma="0.55" data-map-scale="4"></div></div>
 </div>
 
 <script type="module">
   import { mountGlassPlate } from '../src/glass-plate.js';
   const q = new URLSearchParams(location.search);
-  const REFR = q.get('refr') || '210';
-  const BEZEL = q.get('bezel') || '0.22';
-  const CHROMA = q.get('chroma') || '1.05';
-  const MAP = q.get('mapScale') || '5';
+  const REFR = q.get('refr') || '92';
+  const BEZEL = q.get('bezel') || '0.56';
+  const CHROMA = q.get('chroma') || '0.55';
+  const MAP = q.get('mapScale') || '4';
+  const BLUR = q.get('blur') || '0';
   const pill = document.querySelector('.pill');
   pill.dataset.refraction = REFR;
   pill.dataset.bezel = BEZEL;
   pill.dataset.chroma = CHROMA;
   pill.dataset.mapScale = MAP;
+  pill.dataset.blur = BLUR;
   const lens = document.querySelector('.lens');
   lens.dataset.refraction = REFR;
   lens.dataset.chroma = CHROMA;
   lens.dataset.mapScale = MAP;
+  lens.dataset.blur = BLUR;
 
   const glass = mountGlassPlate(document.querySelector('.stage'), {
     layers: ['.lg-bg', '.lg-scrim'],

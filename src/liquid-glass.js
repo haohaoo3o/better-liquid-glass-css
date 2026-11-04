@@ -93,8 +93,15 @@ function profileTable(curvature, ior) {
  * Returns { canvas, width, height, scale } — usable by the SVG path (as a data URL) and by WebGL
  * (as a texture), so both renderers share one optical model.
  */
-// 4×4 ordered-dither matrix (0..15), used to de-band the 8-bit displacement bytes.
-const BAYER4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+// Interleaved gradient noise: a non-repeating 0..1 field used to de-band the 8-bit
+// displacement bytes. A periodic Bayer matrix would show up as a visible dot lattice
+// once the map is magnified by a large refraction.
+function ignNoise(x, y) {
+  const f = 0.06711056 * x + 0.00583715 * y;
+  const g = f - Math.floor(f);
+  const h = 52.9829189 * g;
+  return h - Math.floor(h);
+}
 
 export function renderLensMap(options = {}, scale = 1) {
   const p = { ...DEFAULTS, ...options };
@@ -165,8 +172,8 @@ export function renderLensMap(options = {}, scale = 1) {
         const i1 = Math.min(N, i0 + 1);
         m = table[i0] + (table[i1] - table[i0]) * (f - i0);
       }
-      // Ordered dither (±0.5 LSB) so the rounded R/G bytes do not band into rings.
-      const dth = ((BAYER4[(j & 3) * 4 + (i & 3)] + 0.5) / 16 - 0.5) * 3;
+      // Noise dither (~±0.4 LSB): breaks the 8-bit rings without forming a lattice.
+      const dth = (ignNoise(i, j) - 0.5) * 0.8;
       // Convex glass samples from further inside (towards the centre) near the rim.
       const bx = Math.round(127 * m * nx * dir + dth);
       const by = Math.round(127 * m * ny * dir + dth);
