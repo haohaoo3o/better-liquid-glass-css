@@ -4,7 +4,7 @@ Usage:  python scripts/shoot.py
 Output:
   docs/preview.png     2400x1350  full page
   docs/preview@3x.png  4800x2700  full page, native 3x
-  docs/dispersion.png  1080x900   edge crop at native 3x
+  docs/edge.png       1080x900   edge crop at native 3x
   docs/compare.png     with / without the glass plate, same crop
 """
 from __future__ import annotations
@@ -45,7 +45,7 @@ def main() -> None:
         page.wait_for_timeout(1800)
 
         page.screenshot(path=str(DOCS / "preview@3x.png"))
-        page.screenshot(path=str(DOCS / "dispersion.png"), clip=CLIP)
+        page.screenshot(path=str(DOCS / "edge.png"), clip=CLIP)
 
         # Same crop with the plates switched off, for a side-by-side comparison.
         page.evaluate("() => document.querySelectorAll('.lg-plate').forEach(e => e.style.display = 'none')")
@@ -58,7 +58,7 @@ def main() -> None:
     full = Image.open(DOCS / "preview@3x.png").convert("RGB")
     full.resize((full.width // 2, full.height // 2), Image.LANCZOS).save(DOCS / "preview.png", optimize=True)
 
-    on = Image.open(DOCS / "dispersion.png").convert("RGB")
+    on = Image.open(DOCS / "edge.png").convert("RGB")
     off = Image.open(DOCS / "_off.png").convert("RGB")
     target_w = 640
     ratio = target_w / on.width

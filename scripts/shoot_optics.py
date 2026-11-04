@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 PORT = 8913
 SCALE = 3
-CLIP = {"x": 90, "y": 300, "width": 520, "height": 300}
+CLIP = {"x": 110, "y": 330, "width": 330, "height": 250}
 
 
 def serve() -> socketserver.TCPServer:
@@ -62,6 +62,11 @@ def main() -> None:
     d.text((4, 22), "line pairs, no glass", fill=(150, 160, 170))
     d.text((target_w + gap + 4, 22), "line pairs behind the glass rim", fill=(210, 218, 226))
     out.save(DOCS / "optics.png", optimize=True)
+
+    # 1:1 native crop, upscaled 2x so the fringe is readable in the README.
+    tight = on.crop((0, 0, min(on.width, 900), min(on.height, 700)))
+    tight = tight.resize((tight.width * 2, tight.height * 2), Image.LANCZOS)
+    tight.save(DOCS / "dispersion.png", optimize=True)
     (DOCS / "_optics_on.png").unlink(missing_ok=True)
     (DOCS / "_optics_off.png").unlink(missing_ok=True)
     print("optics", out.size)

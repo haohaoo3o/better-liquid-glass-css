@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>liquid-glass — parameter lab</title>
+<style>
+  :root { --ink: #f2f4f7; --muted: rgba(242,244,247,.5); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #06090c; color: var(--ink);
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+  .board { position: relative; width: 1600px; height: 980px; margin: 0 auto; padding: 86px 0 0 150px; }
+
+  .title { position: absolute; left: 150px; top: 28px; font-size: 22px; letter-spacing: .01em; }
+  .sub { position: absolute; left: 150px; top: 60px; font-size: 13px; color: var(--muted); }
+
+  .colhead { position: absolute; top: 96px; font-size: 12px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted); }
+
+  .rowlabel { position: absolute; left: 24px; width: 110px; text-align: right; font-size: 12.5px;
+    color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .cell { position: absolute; width: 400px; height: 118px; border-radius: 16px; overflow: hidden; }
+
+  /* ---- test patterns ---- */
+  .pat { position: absolute; inset: 0; }
+  .pat-lines {
+    background: repeating-linear-gradient(90deg,
+      rgba(238,244,248,.85) 0 6px, rgba(8,12,16,.94) 6px 18px);
+  }
+  .pat-checker {
+    background-image:
+      linear-gradient(45deg, rgba(238,244,248,.85) 25%, transparent 25%, transparent 75%, rgba(238,244,248,.85) 75%),
+      linear-gradient(45deg, rgba(238,244,248,.85) 25%, transparent 25%, transparent 75%, rgba(238,244,248,.85) 75%);
+    background-size: 26px 26px, 26px 26px;
+    background-position: 0 0, 13px 13px;
+    background-color: rgba(8,12,16,.96);
+  }
+  .pat-diag {
+    background: repeating-linear-gradient(45deg,
+      rgba(238,244,248,.85) 0 5px, rgba(8,12,16,.94) 5px 16px);
+  }
+
+  /* ---- the glass pill sits across the left rim of each cell ---- */
+  .pill {
+    position: absolute;
+    left: -40px; top: 14px;
+    width: 300px; height: 90px;
+    border-radius: 45px;
+    background: rgba(255,255,255,.045);
+    border: 1px solid rgba(255,255,255,.20);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.32), 0 16px 40px rgba(0,0,0,.35);
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div class="board">
+  <div class="title">Dispersion lab — pick one</div>
+  <div class="sub" id="sub"></div>
+</div>
+
+<script type="module">
+  import { mountGlassPlate } from '../src/glass-plate.js';
+
+  const board = document.querySelector('.board');
+  const q = new URLSearchParams(location.search);
+  const REFR = q.get('refr') || '170';
+  const BEZEL = q.get('bezel') || '0.10';
+  const MAP = q.get('mapScale') || '5';
+  const CHROMA = (q.get('chroma') || '0.35,0.65,0.95,1.25').split(',').map(Number);
+  document.getElementById('sub').textContent =
+    `Rows: chroma ${CHROMA.join(' / ')}. Columns: test pattern. Fixed: refraction ${REFR}, bezel ${BEZEL}, mapScale ${MAP}.`;
+  const BGS = [
+    { cls: 'pat-lines', name: 'line pairs' },
+    { cls: 'pat-checker', name: 'checkerboard' },
+    { cls: 'pat-diag', name: 'diagonal' },
+  ];
+  const COL_X = [150, 590, 1030];
+  const ROW_Y = [140, 320, 500, 680];
+
+  BGS.forEach((bg, c) => {
+    const head = document.createElement('div');
+    head.className = 'colhead';
+    head.style.left = `${COL_X[c]}px`;
+    head.textContent = bg.name;
+    board.appendChild(head);
+  });
+
+  CHROMA.forEach((chroma, r) => {
+    const label = document.createElement('div');
+    label.className = 'rowlabel';
+    label.style.top = `${ROW_Y[r] + 46}px`;
+    label.textContent = `chroma ${chroma.toFixed(2)}`;
+    board.appendChild(label);
+
+    BGS.forEach((bg, c) => {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.style.left = `${COL_X[c]}px`;
+      cell.style.top = `${ROW_Y[r]}px`;
+
+      const pat = document.createElement('div');
+      pat.className = `pat ${bg.cls}`;
+      cell.appendChild(pat);
+
+      const pill = document.createElement('div');
+      pill.className = 'pill';
+      pill.setAttribute('data-glass', '');
+      pill.dataset.refraction = REFR;
+      pill.dataset.bezel = BEZEL;
+      pill.dataset.chroma = String(chroma);
+      pill.dataset.mapScale = MAP;
+      cell.appendChild(pill);
+
+      board.appendChild(cell);
+      mountGlassPlate(cell, { layers: ['.pat'], mapScale: Number(MAP) });
+    });
+  });
+
+  window.__glassReady = true;
+</script>
+</body>
+</html>
