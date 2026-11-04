@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0A1018"/>
+      <stop offset="0.42" stop-color="#16232F"/>
+      <stop offset="0.66" stop-color="#2C3B45"/>
+      <stop offset="0.82" stop-color="#6E6154"/>
+      <stop offset="1" stop-color="#C08457"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFE2BC" stop-opacity="0.95"/>
+      <stop offset="0.35" stop-color="#F3B477" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#F3B477" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ridgeFar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#33454F"/>
+      <stop offset="1" stop-color="#22303A"/>
+    </linearGradient>
+    <linearGradient id="ridgeMid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1E2B34"/>
+      <stop offset="1" stop-color="#131C23"/>
+    </linearGradient>
+    <linearGradient id="ridgeNear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0E151A"/>
+      <stop offset="1" stop-color="#070A0D"/>
+    </linearGradient>
+    <linearGradient id="mist" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#DCE6EC" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#DCE6EC" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#DCE6EC" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1150" cy="430" r="330" fill="url(#sun)"/>
+
+  <!-- far ridge -->
+  <path d="M0 470 L90 412 L170 452 L250 398 L330 440 L410 386 L500 436 L580 402 L660 448 L740 392 L820 430 L900 396 L980 440 L1060 404 L1140 446 L1220 400 L1300 438 L1380 396 L1460 436 L1540 404 L1600 440 L1600 900 L0 900 Z"
+        fill="url(#ridgeFar)" opacity="0.92"/>
+
+  <!-- mid ridge, sharper -->
+  <path d="M0 596 L70 540 L130 570 L210 494 L280 548 L350 486 L430 552 L510 500 L590 556 L670 492 L750 550 L830 498 L910 556 L990 500 L1070 554 L1150 496 L1230 552 L1310 502 L1390 556 L1470 500 L1550 550 L1600 520 L1600 900 L0 900 Z"
+        fill="url(#ridgeMid)"/>
+
+  <!-- mist band -->
+  <rect x="0" y="560" width="1600" height="220" fill="url(#mist)"/>
+
+  <!-- near ridge -->
+  <path d="M0 760 L120 690 L230 744 L340 676 L450 736 L560 668 L670 738 L780 684 L890 742 L1000 676 L1110 740 L1220 690 L1330 748 L1440 694 L1550 744 L1600 712 L1600 900 L0 900 Z"
+        fill="url(#ridgeNear)"/>
+</svg>

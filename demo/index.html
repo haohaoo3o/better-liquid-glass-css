@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>liquid-glass — refraction demo</title>
+<link rel="stylesheet" href="demo.css">
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- Background layers. Every glass plate gets a pixel-aligned copy of these. -->
+  <div class="lg-bg"></div>
+  <div class="lg-grid"></div>
+  <div class="lg-hatch"></div>
+  <div class="lg-scrim"></div>
+  <div class="lg-vignette"></div>
+
+  <nav class="nav glass" data-glass>
+    <span class="on"><b>01</b> Overview</span>
+    <span><b>02</b> Optics</span>
+    <span><b>03</b> API</span>
+    <span><b>04</b> Benchmarks</span>
+    <span><b>05</b> License</span>
+  </nav>
+
+  <section class="hero glass" data-glass data-refraction="148" data-bezel="0.10" data-chroma="0.82">
+    <div class="eyebrow">Liquid glass · v1.1</div>
+    <h1>Refraction you can<br>measure in pixels.</h1>
+    <p>
+      An SVG displacement map bends the background at the rim, and five spectral samples
+      separate the fringe the way a thick lens does. No tint layers, no gradient borders.
+    </p>
+    <div class="kpis">
+      <div class="kpi">
+        <div class="v">5<em>bands</em></div>
+        <div class="k">Spectral samples, weighted to sum back to white</div>
+      </div>
+      <div class="kpi">
+        <div class="v">4&#215;<em>map</em></div>
+        <div class="k">Displacement resolution with ordered dithering</div>
+      </div>
+      <div class="kpi">
+        <div class="v">0<em>px</em></div>
+        <div class="k">Drift between the plate and its card</div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="side glass" data-glass data-refraction="148" data-bezel="0.10" data-chroma="0.82">
+    <h2>Edge bend across the rim</h2>
+    <svg class="chart" viewBox="0 0 456 210" role="img" aria-label="Refraction strength falls off from the rim">
+      <defs>
+        <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f2f4f7" stop-opacity="0.16"/>
+          <stop offset="1" stop-color="#f2f4f7" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="M12 176 L60 92 L108 62 L156 44 L204 34 L252 30 L300 34 L348 44 L396 62 L444 92 L444 176 Z" fill="url(#fill)"/>
+      <path d="M12 176 L60 92 L108 62 L156 44 L204 34 L252 30 L300 34 L348 44 L396 62 L444 92"
+            fill="none" stroke="#f2f4f7" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M12 176 L60 120 L108 100 L156 88 L204 82 L252 79 L300 82 L348 88 L396 100 L444 120"
+            fill="none" stroke="#c9a227" stroke-width="1.8" stroke-dasharray="5 5" stroke-linecap="round"/>
+      <text x="12" y="200" fill="rgba(242,244,247,0.42)" font-size="11">rim</text>
+      <text x="404" y="200" fill="rgba(242,244,247,0.42)" font-size="11">centre</text>
+    </svg>
+    <div class="legend">
+      <span><i style="background:#f2f4f7"></i>bend profile</span>
+      <span><i style="background:#c9a227"></i>linear falloff</span>
+    </div>
+  </aside>
+
+  <div class="foot glass" data-glass>liquid-glass</div>
+  <div class="badge glass" data-glass>01</div>
+  <div class="hint">move the pointer — the background copy stays pixel-aligned</div>
+
+</div>
+
+<script type="module">
+  import { mountGlassPlate } from '../src/glass-plate.js';
+
+  const stage = document.querySelector('.stage');
+  const glass = mountGlassPlate(stage, {
+    layers: ['.lg-bg', '.lg-grid', '.lg-hatch', '.lg-scrim', '.lg-vignette'],
+    chroma: 0.68,
+    mapScale: 4,
+  });
+
+  // Expose for screenshots / debugging.
+  window.__glass = glass;
+  window.__glassReady = true;
+</script>
+</body>
+</html>

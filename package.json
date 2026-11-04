@@ -1,0 +1,34 @@
+{
+  "name": "better-liquid-glass-css",
+  "version": "1.1.0",
+  "description": "Refractive liquid glass for the web: real edge bending via SVG displacement, five-band dispersion, pixel-aligned backdrop plates. Chromium, WebKit and Gecko.",
+  "type": "module",
+  "main": "src/liquid-glass.js",
+  "exports": {
+    ".": "./src/liquid-glass.js",
+    "./plate": "./src/glass-plate.js"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "MODIFICATIONS.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "demo": "python -m http.server 8000"
+  },
+  "keywords": [
+    "liquid-glass",
+    "glassmorphism",
+    "refraction",
+    "displacement-map",
+    "chromatic-aberration",
+    "css",
+    "svg-filter"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/haohaoo3o/better-liquid-glass-css.git"
+  }
+}

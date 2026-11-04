@@ -1,0 +1,9 @@
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+
+# generated screenshots (regenerate with scripts/shoot.py)
+docs/_*.png
+docs/preview@3x.png
+docs/optics_full.png
