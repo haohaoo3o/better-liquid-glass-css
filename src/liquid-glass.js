@@ -96,6 +96,8 @@ function profileTable(curvature, ior) {
 // Interleaved gradient noise: a non-repeating 0..1 field used to de-band the 8-bit
 // displacement bytes. A periodic Bayer matrix would show up as a visible dot lattice
 // once the map is magnified by a large refraction.
+const BAYER4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+
 function ignNoise(x, y) {
   const f = 0.06711056 * x + 0.00583715 * y;
   const g = f - Math.floor(f);
@@ -173,7 +175,7 @@ export function renderLensMap(options = {}, scale = 1) {
         m = table[i0] + (table[i1] - table[i0]) * (f - i0);
       }
       // Noise dither (~±0.4 LSB): breaks the 8-bit rings without forming a lattice.
-      const dth = (ignNoise(i, j) - 0.5) * 0.8;
+      const dth = ((BAYER4[(j & 3) * 4 + (i & 3)] + 0.5) / 16 - 0.5) * 1.5;
       // Convex glass samples from further inside (towards the centre) near the rim.
       const bx = Math.round(127 * m * nx * dir + dth);
       const by = Math.round(127 * m * ny * dir + dth);
@@ -266,31 +268,16 @@ function node(name, attrs) {
   return n;
 }
 
-// Spectral sampling. Each band isolates a narrow slice of the R→G→B axis and is displaced
-// at its own scale; the per-channel weights are normalised so every channel still sums to 1
-// and the glass keeps its colour. More bands = a continuous fringe instead of 3 or 5 hard
-// steps, which is what lets us drop the source blur and keep the glass crisp.
-const CHROMA_BANDS = 9;
-
-function buildSpectrum(n) {
-  const raw = [];
-  for (let i = 0; i < n; i++) {
-    const t = i / (n - 1);
-    raw.push([
-      Math.max(0, 1 - 2 * t),                 // red end
-      1 - Math.abs(2 * t - 1),                // green centre
-      Math.max(0, 2 * t - 1),                 // blue end
-    ]);
-  }
-  const sum = [0, 0, 0];
-  for (const w of raw) w.forEach((v, c) => { sum[c] += v; });
-  return raw.map((w) => [w[0] / sum[0], w[1] / sum[1], w[2] / sum[2]]);
-}
-
-const CHANNELS = buildSpectrum(CHROMA_BANDS).map(([r, g, b]) =>
-  `${r.toFixed(4)} 0 0 0 0  0 ${g.toFixed(4)} 0 0 0  0 0 ${b.toFixed(4)} 0 0  0 0 0 1 0`);
-
-const CHROMA_T = Array.from({ length: CHROMA_BANDS }, (_, i) => i / (CHROMA_BANDS - 1));
+// Five spectral samples: R → R/G → G → G/B → B. Weights sum to exactly 1 on every channel,
+// so the glass keeps its colour and the fringe stays narrow instead of smearing into a rainbow.
+const CHANNELS = [
+  '0.75 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0',
+  '0.25 0 0 0 0  0 0.25 0 0 0  0 0 0 0 0  0 0 0 1 0',
+  '0 0 0 0 0  0 0.5 0 0 0  0 0 0 0 0  0 0 0 1 0',
+  '0 0 0 0 0  0 0.25 0 0 0  0 0 0.25 0 0  0 0 0 1 0',
+  '0 0 0 0 0  0 0 0 0 0  0 0 0.75 0 0  0 0 0 1 0',
+];
+const CHROMA_T = [0, 0.35, 0.5, 0.75, 1];
 
 // Filter graph (all coordinates are fractions of the element box — see bendScale):
 //   map        = lens PNG over neutral grey (128 = no bend), only inside the lens rect
