@@ -161,7 +161,7 @@ The rim model now follows [kubai087/glasswork](https://github.com/kubai087/glass
 - the refracting band is an **absolute width** (`rim`, 40 CSS px) clamped on small surfaces, not a
   fraction of the card — so a bigger card no longer gets a wider, muddier fringe;
 - the very edge samples `edge × rim` inward (1.1–1.6), and the bend falls off as `(1 - d/rim)^power`;
-- **dispersion is a small fraction** (`0.15` mehnt red bends ~15% further than blue). Our old `0.55`
+- **dispersion is a small fraction** (`0.15`: red bends ~15% further than blue). Our old `0.55`
   spread the channels ±55% and read as a broad rainbow; ~0.18 with a 40 px rim gives an ~11 px band;
 - under-glass `blur + saturate + brightness` (kept to 0.8 px here) lifts the backdrop without fogging it.
 
