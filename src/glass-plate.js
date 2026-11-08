@@ -35,12 +35,12 @@ const DEFAULTS = {
   // Rim model borrowed from kubai087/glasswork: the refracting band is an absolute
   // width in CSS px, the very edge samples `edge * rim` inward, and dispersion is a
   // small fraction (0.15 = red 15% further than blue), not a broad rainbow.
-  rim: 40,
-  edge: 1.6,
+  rim: 90,
+  edge: 1.4,
   refraction: null, // null = auto: min(rim * edge, shortSide * 0.5)
   bezel: 0.56,
   curvature: 4,
-  chroma: 0.18,
+  chroma: 0.45,
   specular: 0.86,
   specularWidth: 2.4,
   blur: 0,

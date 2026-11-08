@@ -34,7 +34,7 @@ html, body {
   inset: 0;
   background-image: url("assets/alpine.jpg");
   background-size: cover;
-  background-position: 50% 62%;
+  background-position: var(--bg-pos, 50% 95%);
   filter: saturate(0.78) brightness(1.10);
   z-index: 0;
 }
@@ -61,6 +61,17 @@ html, body {
   -webkit-mask-image: radial-gradient(110% 85% at 50% 45%, #000 30%, transparent 76%);
   z-index: 1;
   opacity: 0.55;
+}
+
+.lg-grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='0.55'/></svg>");
+  background-size: 160px 160px;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .lg-scrim {
