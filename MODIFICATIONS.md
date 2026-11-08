@@ -40,7 +40,14 @@ A 42 px tall pill given `refraction: 92` has its rounded caps dragged outward pa
 `glass-plate.js` now derives it from the short side: `clamp(shortSide * 0.30, 8 … 92)`, and per-element
 `data-refraction` still wins.
 
-## 6. `glass-plate.js` — the attachment layer
+## 6. Rim model from glasswork
+
+Adopted from [kubai087/glasswork](https://github.com/kubai087/glasswork) (MIT): the rim is an absolute
+width in CSS px (`rim`, clamped on small surfaces), the edge samples `edge × rim` inward, and
+dispersion is a small fraction of that distance. The earlier fraction-of-card `bezel` made large
+cards produce a very wide, muddy fringe; an absolute rim keeps the band the same at any card size.
+
+## 7. `glass-plate.js` — the attachment layer
 
 Replaces the per-card "clone the background inside the card and guess the offset" approach:
 

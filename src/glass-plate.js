@@ -32,14 +32,22 @@ const DEFAULTS = {
   /** Background layers to copy, in paint order. Each is cloned once per plate. */
   layers: ['.lg-bg', '.lg-scrim'],
   /** Lens defaults; tune per project. */
-  refraction: null, // null = auto: clamp(shortSide * 0.30, 8 … 92)
+  // Rim model borrowed from kubai087/glasswork: the refracting band is an absolute
+  // width in CSS px, the very edge samples `edge * rim` inward, and dispersion is a
+  // small fraction (0.15 = red 15% further than blue), not a broad rainbow.
+  rim: 40,
+  edge: 1.6,
+  refraction: null, // null = auto: min(rim * edge, shortSide * 0.5)
   bezel: 0.56,
   curvature: 4,
-  chroma: 0.55,
+  chroma: 0.18,
   specular: 0.86,
   specularWidth: 2.4,
   blur: 0,
   mapScale: 4,
+  // Under-glass treatment borrowed from glasswork: a light blur plus saturation/brightness
+  // lift keeps the glass clear instead of milky. Set frost.blur = 0 to disable.
+  frost: { blur: 0.8, saturate: 1.35, brightness: 1.04 },
 };
 
 const num = (el, name) => {
@@ -106,7 +114,10 @@ export function mountGlassPlate(stage, options = {}) {
 
     const radius = num(card, 'data-radius') ?? (parseFloat(getComputedStyle(card).borderTopLeftRadius) || 24);
     const shortSide = Math.min(r.width, r.height);
-    const refraction = num(card, 'data-refraction') ?? o.refraction ?? Math.max(8, Math.min(92, shortSide * 0.3));
+    const rim = num(card, 'data-rim') ?? o.rim;
+    const edge = num(card, 'data-edge') ?? o.edge;
+    const refraction = num(card, 'data-refraction') ?? o.refraction ?? Math.min(rim * edge, shortSide * 0.5);
+    const bezel = num(card, 'data-bezel') ?? Math.min(1, rim / Math.max(1, shortSide / 2));
 
     plate.style.width = `${w}px`;
     plate.style.height = `${h}px`;
@@ -117,7 +128,7 @@ export function mountGlassPlate(stage, options = {}) {
 
     return {
       x, y, width: r.width, height: r.height, radius, refraction,
-      bezel: num(card, 'data-bezel') ?? o.bezel,
+      bezel,
       curvature: num(card, 'data-curvature') ?? o.curvature,
       chroma: num(card, 'data-chroma') ?? o.chroma,
       specular: num(card, 'data-specular') ?? o.specular,
@@ -135,8 +146,17 @@ export function mountGlassPlate(stage, options = {}) {
     const geometry = measure(card, plate, inner);
     if (!geometry) return;
 
+    applyFrost(inner);
     const ctrl = createGlass(inner, geometry);
     instances.push({ card, plate, inner, ctrl });
+  }
+
+  function applyFrost(inner) {
+    const f = o.frost;
+    if (!f || !f.blur) return;
+    for (const layer of inner.children) {
+      layer.style.filter = `blur(${f.blur}px) saturate(${f.saturate}) brightness(${f.brightness})`;
+    }
   }
 
   function refresh() {

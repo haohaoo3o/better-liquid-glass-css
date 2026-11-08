@@ -102,10 +102,10 @@ python -m http.server 8000     # ES module 需要 HTTP，不能 file://
 | --- | --- | --- |
 | `targets` | `'[data-glass]'` | 需要玻璃效果的卡片选择器 |
 | `layers` | `['.lg-bg', '.lg-scrim']` | 要复制进玻璃层的背景层，按绘制顺序 |
-| `refraction` | 自动 `clamp(短边×0.30, 8…92)` | 边缘最大位移，CSS px |
-| `bezel` | `0.56` | 折射带宽度，占短边一半的比例；大卡片建议 0.10–0.20 |
+| `rim` | `40` | 折射带宽度，CSS px（按短边收敛） |
+| `edge` | `1.6` | 最外缘向内采样的距离，单位是 rim |
 | `curvature` | `4` | 剖面指数，2 为圆形、4 偏方、越大边缘越陡 |
-| `chroma` | `0.55` | 色散强度；0 关闭额外光谱采样 |
+| `chroma` | `0.18` | 色散强度，≈ 彩边宽度 / (rim × edge)；0 关闭 |
 | `specular` | `0.86` | 边缘高光强度 |
 | `specularWidth` | `2.4` | 高光宽度，CSS px |
 | `blur` | `0` | 玻璃内部磨砂，CSS px |
@@ -154,9 +154,21 @@ docs/                   README 用图
 
 ---
 
+## Borrowed ideas
+
+The rim model now follows [kubai087/glasswork](https://github.com/kubai087/glasswork) (MIT):
+
+- the refracting band is an **absolute width** (`rim`, 40 CSS px) clamped on small surfaces, not a
+  fraction of the card — so a bigger card no longer gets a wider, muddier fringe;
+- the very edge samples `edge × rim` inward (1.1–1.6), and the bend falls off as `(1 - d/rim)^power`;
+- **dispersion is a small fraction** (`0.15` mehnt red bends ~15% further than blue). Our old `0.55`
+  spread the channels ±55% and read as a broad rainbow; ~0.18 with a 40 px rim gives an ~11 px band;
+- under-glass `blur + saturate + brightness` (kept to 0.8 px here) lifts the backdrop without fogging it.
+
 ## Credits
 
 - 引擎基于 [gentpan/liquidglass](https://github.com/gentpan/liquidglass)（MIT）。
+- rim 模型与色散量级参考 [kubai087/glasswork](https://github.com/kubai087/glasswork)（MIT）。
 - `demo/assets/alpine.jpg` 来自 Unsplash（photo-1506905925346-21bda4d32df4），仅作演示背景。
 
 ## License
